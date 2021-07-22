@@ -2,11 +2,8 @@ import 'package:bmi_calculator/icon_container.dart';
 import 'package:bmi_calculator/reused_card.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'constants.dart';
 
-const bottomContainerHeight = 60.0;
-const cardColor = 0xFF1D1E33;
-const bottomContainerColor = 0xFFEB1555;
-const inActiveColor = 0xFF111328;
 enum Gender { male, female }
 
 class InputPage extends StatefulWidget {
@@ -15,28 +12,8 @@ class InputPage extends StatefulWidget {
 }
 
 class _InputPageState extends State<InputPage> {
-  Color maleCardColour = Color(inActiveColor);
-  Color femaleCardColour = Color(inActiveColor);
-  void updateColour(Gender selectedGender) {
-    //male card pressed
-    if (selectedGender == Gender.male) {
-      if (maleCardColour == Color(inActiveColor)) {
-        maleCardColour = Color(cardColor);
-        femaleCardColour = Color(inActiveColor);
-      } else {
-        maleCardColour = Color(inActiveColor);
-      }
-    }
-    //female card pressed
-    if (selectedGender == Gender.female) {
-      if (femaleCardColour == Color(inActiveColor)) {
-        femaleCardColour = Color(cardColor);
-        maleCardColour = Color(inActiveColor);
-      } else {
-        femaleCardColour = Color(inActiveColor);
-      }
-    }
-  }
+  Gender selectedGender;
+  int height = 180;
 
   @override
   Widget build(BuildContext context) {
@@ -47,63 +24,92 @@ class _InputPageState extends State<InputPage> {
           ),
         ),
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
                 child: Row(
               children: [
                 Expanded(
-                    child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      updateColour(Gender.male);
-                    });
-                  },
-                  child: ReusedContainer(
-                      colour: maleCardColour,
-                      cardChild: IconContainer(
-                        icon: FontAwesomeIcons.mars,
-                        label: "MALE",
-                      )),
-                )),
+                    child: ReusedContainer(
+                        onpress: () {
+                          setState(() {
+                            selectedGender = Gender.male;
+                          });
+                        },
+                        colour: selectedGender == Gender.male
+                            ? Color(kCardColor)
+                            : Color(kInActiveColor),
+                        cardChild: IconContainer(
+                          icon: FontAwesomeIcons.mars,
+                          label: "MALE",
+                        ))),
                 Expanded(
-                    child: GestureDetector(
-                  onTap: () {
+                    child: ReusedContainer(
+                  onpress: () {
                     setState(() {
-                      updateColour(Gender.female);
+                      selectedGender = Gender.female;
                     });
                   },
-                  child: ReusedContainer(
-                    colour: femaleCardColour,
-                    cardChild: IconContainer(
-                      icon: FontAwesomeIcons.venus,
-                      label: "FEMALE",
-                    ),
+                  colour: selectedGender == Gender.female
+                      ? Color(kCardColor)
+                      : Color(kInActiveColor),
+                  cardChild: IconContainer(
+                    icon: FontAwesomeIcons.venus,
+                    label: "FEMALE",
                   ),
                 ))
               ],
             )),
             Expanded(
                 child: ReusedContainer(
-              colour: Color(cardColor),
+              cardChild: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "HEIGHT",
+                    style: kTextStyle,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(height.toString(), style: kNumberStyle),
+                      Text("cm", style: kTextStyle)
+                    ],
+                  ),
+                  Slider(
+                    value: height.toDouble(),
+                    min: 120.0,
+                    max: 220.0,
+                    activeColor: Color(0xFFEB1555),
+                    inactiveColor: Color(0xFFD8E98),
+                    onChanged: (double newValue) {
+                      height = newValue.round();
+                    },
+                  )
+                ],
+              ),
+              colour: Color(kCardColor),
             )),
             Expanded(
                 child: Row(
               children: [
                 Expanded(
                     child: ReusedContainer(
-                  colour: Color(cardColor),
+                  colour: Color(kCardColor),
                 )),
                 Expanded(
                     child: ReusedContainer(
-                  colour: Color(cardColor),
+                  colour: Color(kCardColor),
                 ))
               ],
             )),
             Container(
-              color: Color(bottomContainerColor),
+              color: Color(kBottomContainerColor),
               margin: EdgeInsets.only(top: 10.0),
               width: double.infinity,
-              height: bottomContainerHeight,
+              height: kBottomContainerHeight,
             )
           ],
         ));
